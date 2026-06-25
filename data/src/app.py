@@ -29,52 +29,13 @@ def inject_custom_style():
     [data-testid="stSidebar"] .block-container {
         padding: 1.5rem 1rem;
     }
-    /* ========== 修改：主标题居中 ========== */
+    /* 渐变主标题 */
     h1 {
         background: linear-gradient(90deg, #2563eb, #7c3aed);
         -webkit-background-clip: text;
         color: transparent;
         font-weight: 700;
         font-size: 2.4rem !important;
-        text-align: center !important; /* 标题居中核心代码 */
-    }
-    /* 顶部简介卡片居中适配 */
-    .top-desc-card {
-        text-align: center;
-    }
-    /* ========== 新增：右侧悬浮面板样式 ========== */
-    .right-float-panel {
-        position: fixed;
-        right: 15px;
-        top: 22%;
-        width: 240px;
-        background: #ffffff;
-        border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        padding: 18px;
-        z-index: 999; /* 层级最高，不会被聊天内容遮挡 */
-        border: 1px solid #e2e8f0;
-    }
-    .float-title {
-        font-size: 16px;
-        font-weight: bold;
-        color: #2563eb;
-        text-align: center;
-        margin-bottom: 12px;
-        padding-bottom: 8px;
-        border-bottom: 1px solid #f1f5f9;
-    }
-    .float-item {
-        font-size: 13px;
-        line-height: 1.7;
-        color: #475569;
-        margin: 6px 0;
-    }
-    .float-notice {
-        background: #fff7ed;
-        padding: 10px;
-        border-radius: 10px;
-        margin-top: 14px;
     }
     /* 聊天消息卡片美化 */
     .stChatMessage {
@@ -122,7 +83,7 @@ def inject_custom_style():
         position: fixed;
         bottom: 0;
         left: 16rem;
-        right: 280px; /* 让出右侧悬浮面板宽度，避免重叠 */
+        right: 2rem;
         background: #fff;
         padding: 1rem 1.5rem;
         box-shadow: 0 -4px 16px rgba(0,0,0,0.05);
@@ -156,28 +117,6 @@ st.set_page_config(
 )
 # 注入全局美化样式（必须在set_page_config之后）
 inject_custom_style()
-
-# -------------------------- 页面右侧悬浮元素（新增） --------------------------
-st.markdown("""
-<div class="right-float-panel">
-    <div class="float-title">📌 校园快捷助手</div>
-    <div class="float-item">🔹 查课表/奖学金/宿舍规则</div>
-    <div class="float-item">🔹 自动计算GPA平均绩点</div>
-    <div class="float-item">🔹 查询当前教学周</div>
-    <div class="float-item">🔹 语音输入&语音播报</div>
-    <hr style="margin:12px 0;">
-    <div class="float-title">📢 校园公告</div>
-    <div class="float-notice">
-        <div class="float-item">本周六下午图书馆闭馆维护</div>
-        <div class="float-item">奖学金申报截止：6月30日</div>
-    </div>
-    <hr style="margin:12px 0;">
-    <div class="float-title">💡 使用小贴士</div>
-    <div class="float-item">1. 问题带上分数可自动算绩点</div>
-    <div class="float-item">2. 侧边栏一键清空对话记录</div>
-    <div class="float-item">3. 语音功能需安装ffmpeg依赖</div>
-</div>
-""", unsafe_allow_html=True)
 
 # 加载环境变量
 load_dotenv()
@@ -324,10 +263,10 @@ with st.sidebar:
         st.rerun()
 
 # -------------------------- 主页面聊天UI美化分层 --------------------------
-# 顶部标题+简介卡片（卡片增加居中class）
+# 顶部标题+简介卡片
 st.title("🏫 校园生活百事通助手")
 st.markdown("""
-<div class="top-desc-card" style="background:linear-gradient(135deg,#f0f7ff,#f5f3ff); padding:1rem 1.5rem; border-radius:16px; margin-bottom:1.2rem">
+<div style="background:linear-gradient(135deg,#f0f7ff,#f5f3ff); padding:1rem 1.5rem; border-radius:16px; margin-bottom:1.2rem">
 <p style="margin:0; color:#334155">
 基于本地校园知识库 + 大模型RAG智能问答，支持【语音输入提问+语音朗读回答】，兼顾周数查询、绩点换算，一站式解决校园全部疑问
 </p>
@@ -366,7 +305,7 @@ if input_text:
         with st.spinner("AI正在检索知识库并思考答案..."):
             res = agent_answer(input_text)
         st.markdown(res)
-        st.session_state.messages.append({"role": "assistant", content": res})
+        st.session_state.messages.append({"role": "assistant", "content": res})
 
         # 自动朗读逻辑预留（修复a coroutine was expected报错位置）
         if auto_tts:
